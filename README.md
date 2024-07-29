@@ -5,6 +5,7 @@ This repository contains scripts for automating AWS Identity and Access Manageme
 ## 📂 **Contents**
 
 1. **Python Scripts**
+   - `create_user.py`
    - `create_policy.py`
    - `attach_user_policy.py`
    - `detach_user_policy.py`
@@ -14,10 +15,22 @@ This repository contains scripts for automating AWS Identity and Access Manageme
    - `delete_role.py`
    - `iam_automation.py`
    
-2. **Shell Script**
+3. **Shell Script**
    - `iam_automation.sh`
 
 ## 📜 **Python Scripts**
+### `create_user.py`
+Creates an IAM User.
+
+```python
+def create_user(user_name):
+    try:
+        response = iam_client.create_user(UserName=user_name)
+        print(f'User {user_name} created successfully.')
+        print(response)
+    except Exception as e:
+        print(f'Error creating user: {e}')
+```
 
 ### `create_policy.py`
 Creates an IAM policy.
