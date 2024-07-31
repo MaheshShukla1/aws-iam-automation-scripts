@@ -6,6 +6,9 @@ This repository contains scripts for automating AWS Identity and Access Manageme
 
 1. **Python Scripts**
    - `create_user.py`
+   - `delete_user.py`
+   - `create_group.py`
+   - `delete_group.py`
    - `create_policy.py`
    - `attach_user_policy.py`
    - `detach_user_policy.py`
@@ -30,6 +33,82 @@ def create_user(user_name):
         print(response)
     except Exception as e:
         print(f'Error creating user: {e}')
+
+create_user('Alice')
+```
+**Usage:**
+```python
+python create_user.py
+```
+### `delete_user.py`
+Delete an IAM User.
+
+```python
+import boto3
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+def delete_user(user_name):
+    iam_client = boto3.client('iam')
+    try:
+        response = iam_client.delete_user(UserName=user_name)
+        logging.info(f'User {user_name} deleted successfully.')
+        logging.info(response)
+    except Exception as e:
+        logging.error(f'Error deleting user: {e}')
+
+delete_user('Alice')
+```
+**Usage:**
+```python
+python delete_user.py
+```
+
+### `create_group.py`
+Creates an IAM Group.
+
+```python
+import boto3
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+def create_group(group_name):
+    iam_client = boto3.client('iam')
+    try:
+        response = iam_client.create_group(GroupName=group_name)
+        logging.info(f'Group {group_name} created succesfully.')
+        logging.info(response)
+    except Exception as e:
+        logging.error(f'Error creating group: {e}')
+
+create_group('DeveloperAdmin')
+```
+**Usage:**
+```python
+python create_group.py
+```
+### `delete_group.py`
+Delete an IAM Group.
+
+```python
+import boto3
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+def delete_group(group_name):
+    iam_client = boto3.client('iam')
+    try:
+        response = iam_client.delete_group(GroupName=group_name)
+        logging.info(f'Deleting Group {group_name} deleted successfully.')
+        logging.info(response)
+    except Exception as e:
+        logging.error(f'Error deleting group: {e}')
+
+delete_group('DeveloperAdmin')
+```
+**Usage:**
+```python
+python delete_group.py
 ```
 
 ### `create_policy.py`
