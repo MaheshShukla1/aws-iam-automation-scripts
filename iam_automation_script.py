@@ -60,6 +60,32 @@ def create_user_with_mfa(user_name,password,mfa_code_1,mfa_code_2):
         logging.info(f'Virtual mfa device created for {user_name}')
         log_response('Create virtual mfa device',mfa_response)
 
+        # Create Virtual MFA Device:
+        # Calls iam_client.create_virtual_mfa_device to create a virtual MFA device for the user.
+        # Names the MFA device based on the user's name for easy identification.
+        # Logs the successful creation of the virtual MFA device and the detailed response.
+
+        # Enable MFA For user
+        iam_client.enable_mfa_device(
+            UserName=user_name,
+            SerialNumber=mfa_response['VirtualMFADevice']['SerialNumber'],
+            AuthenticationCode1=mfa_code_1,
+            AuthenticationCode2=mfa_code_2
+        )
+        logging.info(f'MFA Enabled for {user_name}')
+
+        # Enable MFA:
+        # Calls iam_client.enable_mfa_device to enable MFA for the user.
+        # Uses the serial number from the virtual MFA device response and the two MFA codes provided.
+        # Logs the successful enabling of MFA.
+        # Error Handling:
+        # Catches any exceptions that occur during the process and logs an error message.
+    except Exception as e:
+        logging.error(f'Error creating user or setting up MFA: {e}')
+
+        
+
+
 
 
     
