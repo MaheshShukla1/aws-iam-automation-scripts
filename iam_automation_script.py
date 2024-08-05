@@ -25,6 +25,25 @@ def log_response(action,response):
 
 # Create User with MFA create_user_with_mfa function
 
+def enforce_password_policy(min_length=12,require_symbols=True,require_numbers=True,require_upper_case=True,require_lower_case=True,max_age=90,reuse_prevention=5,allow_password_change=True):
+    try:
+        response = iam_client.update_account_password_policy(
+        MinimumPasswordLength=min_length,
+        RequireSymbols=require_symbols,
+        RequireNumbers=require_numbers,
+        RequireUppercaseCharacters=require_upper_case,
+        RequireLowercaseCharacters=require_lower_case,
+        AllowUsersToChangePassword=allow_password_change,
+        MaxPasswordAge=max_age,
+        PasswordReusePrevention=reuse_prevention,
+        HardExpiry=False
+
+    )
+        logging.info("Password policy update successfully.")
+        log_response('Update account Password policy.',response)
+    except Exception as e:
+        logging.error(f'Error updating password policy: {e}')
+    
 def create_user_with_mfa(user_name,password,mfa_code_1,mfa_code_2):
     try:
         # Create User
