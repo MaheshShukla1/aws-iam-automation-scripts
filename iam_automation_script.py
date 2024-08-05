@@ -83,6 +83,57 @@ def create_user_with_mfa(user_name,password,mfa_code_1,mfa_code_2):
     except Exception as e:
         logging.error(f'Error creating user or setting up MFA: {e}')
 
+# Rotate Access Key
+def rotate_access_key(user_name):
+    try:
+        # Create a new access key
+        new_key_response = iam_client.create_access(UserName=user_name)
+        logging.info(f'New Access key created for {user_name}')
+        log_response('Create access keys',new_key_response)
+
+        # Purpose: Rotates the access keys for an IAM user by creating a new key and deactivating/deleting old ones.
+        # Parameters:
+        # user_name: The name of the IAM user for whom the access key rotation will be performed.
+
+        # Functionality:
+        # Create New Access Key:
+        # Calls iam_client.create_access_key to create a new access key for the user.
+        # Logs the successful creation of the new access key and the detailed response.
+
+        # Deactivate old access keys (if any)
+        list_keys_response = iam_client.list_access_keys(UserName=user_name)
+        for key in list_keys_response['AccessKeyMetadata']:
+            if key['AccessKeyId'] != new_key_response['AccessKey']['AccessKeyId']:
+                iam_client.update_access_key(
+                    UserName=user_name,
+                    AccessKeyId=key['AccessKeyId'],
+                    Status='Inactive'
+                )
+                logging.info(f'Access key {key["AccessKeyId"]} deactivated for {user_name}.')
+                # List and Deactivate Old Access Keys:
+                # Calls iam_client.list_access_keys to list all access keys for the user.
+                # Iterates through each key in the list.
+                # If the key ID is not the same as the newly created access key, it deactivates the old key by setting its status to 'Inactive'.
+                # Logs the deactivation of each old access key.
+
+                # Delete old access keys
+                for key in list_keys_response['AccessKeyMetaData']:
+                    if key['AccessKeyId'] != new_key_response['AccessKey']['AccessKeyId']:
+                        iam_client.delete_access_key(
+                            UserName=user_name,
+                            AccessKeyId=key['AccessKeyId']
+                        )
+                        logging.info(f'Access key {key["AccessKeyId"]} deleted for {user_name}.')            
+        # Delete Old Access Keys:
+        # Iterates through the list of access keys again.
+        # If the key ID is not the same as the newly created access key, it deletes the old key.
+        # Logs the deletion of each old access key.
+        
+        # Error Handling:
+        # Catches any exceptions that occur during the process and logs an error message.
+    except Exception as e:
+        logging.error(f'Error rotating access key: {e}')              
+
         
 
 
