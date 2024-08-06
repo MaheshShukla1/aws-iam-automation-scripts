@@ -153,16 +153,20 @@ def list_policies():
 
 def validate_json(json_str):
     """
-    Validate a json string
-    
-    :param json_str: JSON strong to validates
-    :raises: ValueError if json is valid
+    Validates a JSON string.
+
+    Args:
+        json_str: The JSON string to validate.
+
+    Returns:
+        True if the JSON is valid, False otherwise.
     """
     try:
         json.loads(json_str)
-    except Exception as e:
-        logging.error(f'Invalid JSON: {e}')
-
+        return True
+    except json.JSONDecodeError as e:
+        logging.error(f"Invalid JSON: {e}")
+        return False
 documents = {
     "Version": "2012-10-17",
     "Statement": [
@@ -244,9 +248,8 @@ def main():
                 delete_user(username)
             elif choice == '4':
                 role_name = input('Enter rolename: ')
-                assume_role_policy_document_str = json.dumps(trust_policy)
-                if validate_json(assume_role_policy_document_str):
-                    create_role(role_name, json.dumps(assume_role_policy_document_str))
+                if validate_json(str(trust_policy)):  # Validate as string directly
+                    create_role(role_name, trust_policy)  # Pass the dictionary directly
                 else:
                     print("Invalid JSON format")
             elif choice == '5':
