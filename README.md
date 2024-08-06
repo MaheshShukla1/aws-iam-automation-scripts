@@ -22,7 +22,7 @@ This repository contains scripts for automating AWS Identity and Access Manageme
    - `iam_automation.sh`
 
 ## 📜 **Python Scripts**
-### `create_user.py`
+### create_user.py
 Creates an IAM User.
 
 ```python
