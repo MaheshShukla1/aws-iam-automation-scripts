@@ -6,17 +6,17 @@ This repository contains scripts for automating AWS Identity and Access Manageme
 
 1. **Python Scripts**
    - [Create User](#create-user)
-   - `delete_user.py`
-   - `create_group.py`
-   - `delete_group.py`
-   - `create_policy.py`
-   - `attach_user_policy.py`
-   - `detach_user_policy.py`
-   - `create_role.py`
-   - `attach_role_policy.py`
-   - `detach_role_policy.py`
-   - `delete_role.py`
-   - `iam_automation.py`
+   - [Delete User](#delete-user)
+   - [Create Group](#create-group)
+   - [Delete Group](#delete-group)
+   - [Create Policy](#create-policy)
+   - [Delete Policy](#delete-policy)
+   - [Attach User Policy](#attach-user-policy)
+   - [Detach User Policy](#detach-user-policy)
+   - [Create Role](#create-role)
+   - [Delete Role](#delete-role)
+   - [Atach Role Policy](#attach-role-policy)
+   - [Detach Role Policy](#detach-role-policy)
    
 3. **Shell Script**
    - `iam_automation.sh`
@@ -148,6 +148,25 @@ create_policy('S3FullAccessPolicy', policy_document)
 ```bash
 python create_policy.py
 ```
+## Delete Policy
+Delete an IAM Policy
+
+```python
+def delete_policy(policy_arn):
+    iam_client = boto3.client('iam')
+    try:
+        response = iam_client.delete_policy(PolicyArn=policy_arn)
+        logging.info(f'Policy {policy_arn} deleted successfully.')
+        logging.info(response)
+    except Exception as e:
+        print(f'Error deleting policy: {e}')
+```
+
+***Usage***
+```bash
+python delete_policy.py
+```
+
 ### Attach User Policy
 Attaches a policy to user.
 
@@ -237,6 +256,29 @@ create_role('EC2S3AccessRole', trust_policy)
 ```bash
 python create_role.py
 ```
+### Delete Role 
+Delets an IAM Role.
+
+```python
+import boto3
+
+def delete_role(role_name):
+    iam_client = boto3.client('iam')
+    try:
+        response = iam_client.delete_role(
+            RoleName=role_name
+        )
+        print(f'Role {role_name} deleted successfully.')
+        print(response)
+    except Exception as e:
+        print(f'Error deleting role: {e}')
+
+delete_role('EC2S3AccessRole')
+```
+**Usage**
+```bash
+python delete_role.py
+```
 
 ### Atach Role Policy
 Attaches a Role policy to a role.
@@ -286,30 +328,6 @@ detach_role_policy('EC2S3AccessRole', 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyA
 **Usage**
 ```bash
 python detach_role_policy.py
-```
-
-### Delete Role 
-Delets an IAM Role.
-
-```python
-import boto3
-
-def delete_role(role_name):
-    iam_client = boto3.client('iam')
-    try:
-        response = iam_client.delete_role(
-            RoleName=role_name
-        )
-        print(f'Role {role_name} deleted successfully.')
-        print(response)
-    except Exception as e:
-        print(f'Error deleting role: {e}')
-
-delete_role('EC2S3AccessRole')
-```
-**Usage**
-```bash
-python delete_role.py
 ```
 
 ## 🛠️ Shell Script
