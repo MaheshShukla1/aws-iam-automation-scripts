@@ -26,12 +26,12 @@ def delete_user(user_name):
     except Exception as e:
         logging.error(f'Error deleting the user {user_name}: {e}')
 
-def create_role(role_name,assume_role_policy_document):
+def create_role(role_name, assume_role_policy_document):
     """
     Create a new IAM Role
 
     :param role_name: Name of the policy to create
-    :param assume_role_policy_document: Policy document for role assumption
+    :param assume_role_policy_document: Dictionary representing the assume role policy document
     """
     try:
         response = iam.create_role(
@@ -244,9 +244,9 @@ def main():
                 delete_user(username)
             elif choice == '4':
                 role_name = input('Enter rolename: ')
-                assume_role_policy_document = trust_policy
-                if validate_json(assume_role_policy_document):
-                    create_role(role_name, json.loads(assume_role_policy_document))
+                assume_role_policy_document_str = json.dumps(trust_policy)
+                if validate_json(assume_role_policy_document_str):
+                    create_role(role_name, json.dumps(assume_role_policy_document_str))
                 else:
                     print("Invalid JSON format")
             elif choice == '5':
