@@ -5,7 +5,7 @@ This repository contains scripts for automating AWS Identity and Access Manageme
 ## 📂 **Contents**
 
 1. **Python Scripts**
-   - `create_user.py`
+   - [create_user.py](#create_user.py)
    - `delete_user.py`
    - `create_group.py`
    - `delete_group.py`
