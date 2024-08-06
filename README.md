@@ -5,7 +5,7 @@ This repository contains scripts for automating AWS Identity and Access Manageme
 ## 📂 **Contents**
 
 1. **Python Scripts**
-[Create User](#create-user)
+   - [Create User](#create-user)
    - `delete_user.py`
    - `create_group.py`
    - `delete_group.py`
@@ -40,7 +40,7 @@ create_user('Alice')
 ```python
 python create_user.py
 ```
-### `delete_user.py`
+### Delete User
 Delete an IAM User.
 
 ```python
@@ -64,7 +64,7 @@ delete_user('Alice')
 python delete_user.py
 ```
 
-### `create_group.py`
+### Create Group
 Creates an IAM Group.
 
 ```python
@@ -87,7 +87,7 @@ create_group('DeveloperAdmin')
 ```python
 python create_group.py
 ```
-### `delete_group.py`
+### Delete Group
 Delete an IAM Group.
 
 ```python
@@ -111,7 +111,7 @@ delete_group('DeveloperAdmin')
 python delete_group.py
 ```
 
-### `create_policy.py`
+### Create Policy
 Creates an IAM policy.
 
 ```python
@@ -148,7 +148,7 @@ create_policy('S3FullAccessPolicy', policy_document)
 ```bash
 python create_policy.py
 ```
-### `attach_user_policy.py`
+### Attach User Policy
 Attaches a policy to user.
 
 ```python
@@ -173,7 +173,7 @@ attach_user_policy('JohnDoe', 'arn:aws:iam::aws:policy/S3FullAccessPolicy')
 python attach_user_policy.py
 ```
 
-### `detach_user_policy.py`
+### Detach User Policy
 Detaches a policy from user.
 
 ```python
@@ -199,7 +199,7 @@ detach_user_policy('JohnDoe', 'arn:aws:iam::aws:policy/S3FullAccessPolicy')
 python detach_user_policy.py
 ```
 
-### `create_role.py`
+### Create Role
 Creates an IAM Role with a trust policy.
 
 ```python
@@ -238,7 +238,7 @@ create_role('EC2S3AccessRole', trust_policy)
 python create_role.py
 ```
 
-### `attach_role_policy.py`
+### Atach Role Policy
 Attaches a Role policy to a role.
 
 ```python
@@ -263,7 +263,7 @@ attach_role_policy('EC2S3AccessRole', 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyA
 python attach_role_policy.py
 ```
 
-### `detach_role_policy.py`
+### Detach Role Policy
 Detaches a Role policy from a role.
 
 ```python
@@ -288,7 +288,7 @@ detach_role_policy('EC2S3AccessRole', 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyA
 python detach_role_policy.py
 ```
 
-### `delete_role.py`
+### Delete Role 
 Delets an IAM Role.
 
 ```python
