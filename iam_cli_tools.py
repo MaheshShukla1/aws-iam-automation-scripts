@@ -18,6 +18,32 @@ def create_user(user_name):
 
 def delete_user(user_name):
     try:
+        # Delete login profile if exists
+        try:
+            iam.delete_login_profile(UserName=user_name)
+            logging.info(f'Login profile for user {user_name} deleted successfully.')
+        except iam.exceptions.NoSuchEntityException:
+            logging.info(f'No login profile for user {user_name}. Skipping.')
+
+        # Delete access keys
+        access_keys = iam.list_access_keys(UserName=user_name)
+        for key in access_keys['AccessKeyMetadata']:
+            iam.delete_access_key(UserName=user_name, AccessKeyId=key['AccessKeyId'])
+            logging.info(f'Access key {key["AccessKeyId"]} for user {user_name} deleted successfully.')
+
+        # Delete inline policies
+        inline_policies = iam.list_user_policies(UserName=user_name)
+        for policy_name in inline_policies['PolicyNames']:
+            iam.delete_user_policy(UserName=user_name, PolicyName=policy_name)
+            logging.info(f'Inline policy {policy_name} for user {user_name} deleted successfully.')
+
+        # Delete attached policies
+        attached_policies = iam.list_attached_user_policies(UserName=user_name)
+        for policy in attached_policies['AttachedPolicies']:
+            iam.detach_user_policy(UserName=user_name, PolicyArn=policy['PolicyArn'])
+            logging.info(f'Policy {policy["PolicyArn"]} detached from user {user_name} successfully.')
+
+        # Finally delete the user
         response = iam.delete_user(UserName=user_name)
         logging.info(f'User {user_name} deleted successfully.')
         return response
