@@ -18,25 +18,17 @@ def create_user(user_name):
 
 def delete_user(user_name):
     try:
-        response = iam.delete_user(
-            UserName=user_name
-        )
+        response = iam.delete_user(UserName=user_name)
         logging.info(f'User {user_name} deleted successfully.')
         return response
     except Exception as e:
         logging.error(f'Error deleting the user {user_name}: {e}')
 
 def create_role(role_name, trust_policy):
-    """
-    Create a new IAM Role
-
-    :param role_name: Name of the policy to create
-    :param assume_role_policy_document: Dictionary representing the assume role policy document
-    """
     try:
         response = iam.create_role(
             RoleName=role_name,
-            AssumeRolePolicyDocument= json.dumps(trust_policy)
+            AssumeRolePolicyDocument=json.dumps(trust_policy)
         )
         logging.info(f'Role: {role_name} created successfully.')
         logging.info(response)
@@ -44,10 +36,6 @@ def create_role(role_name, trust_policy):
         logging.error(f'Error creating role: {e}')
 
 def delete_role(role_name):
-    """
-    Delete an existing IAM role.
-    :param role_name: Name of the role to delete
-    """
     try:
         response = iam.delete_role(RoleName=role_name)
         logging.info(f'Role {role_name} deleted successfully.')
@@ -55,58 +43,31 @@ def delete_role(role_name):
     except Exception as e:
         logging.error(f'Error deleting role: {role_name}: {e}')
 
-def attach_role_policy(role_name,policy_arn):
-    """
-    Attach a policy to an IAM Role.
-
-    :param role_name: Name of the role
-    :param policy_arn: ArN of the policy to attach
-    """
+def attach_role_policy(role_name, policy_arn):
     try:
-        response = iam.attach_role_policy(RoleName=role_name,PolicyArn=policy_arn)
-        logging.info(f'Policy {policy_arn} attach to role: {role_name} successfully.')
+        response = iam.attach_role_policy(RoleName=role_name, PolicyArn=policy_arn)
+        logging.info(f'Policy {policy_arn} attached to role: {role_name} successfully.')
         logging.info(response)
     except Exception as e:
         logging.error(f'Error attaching policy to role: {e}')
 
-def detach_role_policy(role_name,policy_arn):
-    """
-    Detach a policy from an IAM Role
-
-    :param role_name: Name of the role
-    :param policy_arn: ARN of the policy to detach
-    """
+def detach_role_policy(role_name, policy_arn):
     try:
-        response = iam.detach_role_policy(
-            RoleName=role_name,
-            PolicyArn=policy_arn
-        )
+        response = iam.detach_role_policy(RoleName=role_name, PolicyArn=policy_arn)
         logging.info(f'Policy {policy_arn} detached from role: {role_name} successfully.')
         logging.info(response)
     except Exception as e:
         logging.error(f'Error detaching policy from role: {e}')
 
-
-def create_policy(policy_name,policy_document):
-    """
-    Create an IAM policy
-
-    :param  policy_name: Name of the policy to create
-    :param policy_document: Policy Document
-    """
+def create_policy(policy_name, policy_document):
     try:
-        response = iam.create_policy(PolicyName=policy_name,PolicyDocument=policy_document)
+        response = iam.create_policy(PolicyName=policy_name, PolicyDocument=json.dumps(policy_document))
         logging.info(f'Creating policy with name {policy_name}')
         return response
     except Exception as e:
         logging.error(f'Error creating policy: {e}')
-        
-def delete_policy(policy_arn):
-    """
-    Delete an existing IAM policy
 
-    :param policy_arn: ARN of the policy to delete
-    """
+def delete_policy(policy_arn):
     try:
         response = iam.delete_policy(PolicyArn=policy_arn)
         logging.info(f'Policy {policy_arn} deleted successfully.')
@@ -115,58 +76,40 @@ def delete_policy(policy_arn):
         logging.error(f'Error deleting policy: {e}')
 
 def list_users():
-    """
-    List all IAM Users.
-    """
     try:
         response = iam.list_users()
         logging.info('Listing users:')
-        for user in response.get('Users',[]):
+        for user in response.get('Users', []):
             logging.info(user)
     except Exception as e:
         logging.error(f'Error listing users: {e}')
 
 def list_roles():
-    """
-    List all IAM Roles
-    """
     try:
-        response = iam.client_list_roles()
+        response = iam.list_roles()
         logging.info('Listing Roles:')
-        for role in response.get('Roles',[]):
+        for role in response.get('Roles', []):
             logging.info(role)
     except Exception as e:
         logging.error(f'Error listing roles: {e}')
 
 def list_policies():
-    """
-    List All IAM policies.
-    """
     try:
         response = iam.list_policies()
         logging.info('Listing policies.')
-        for policy in response.get('Policies',[]):
+        for policy in response.get('Policies', []):
             logging.info(policy)
     except Exception as e:
         logging.error(f'Error listing policies: {e}')
 
-
 def validate_json(json_str):
-    """
-    Validates a JSON string.
-
-    Args:
-        json_str: The JSON string to validate.
-
-    Returns:
-        True if the JSON is valid, False otherwise.
-    """
     try:
         json.loads(json_str)
         return True
     except json.JSONDecodeError as e:
         logging.error(f"Invalid JSON: {e}")
         return False
+
 documents = {
     "Version": "2012-10-17",
     "Statement": [
@@ -215,11 +158,7 @@ trust_policy = {
     ]
 }
 
-
 def main():
-    """
-    Main function to handle user input and execute corresponding IAM operations.
-    """
     while True:
         try:
             print("\n Select an option")
@@ -248,27 +187,26 @@ def main():
                 delete_user(username)
             elif choice == '4':
                 role_name = input('Enter rolename: ')
-                if validate_json(str(trust_policy)):  # Validate as string directly
-                    create_role(role_name, trust_policy)  # Pass the dictionary directly
+                if validate_json(json.dumps(trust_policy)):
+                    create_role(role_name, trust_policy)
                 else:
                     print("Invalid JSON format")
             elif choice == '5':
-                list_roles()
+                delete_role(input("Enter rolename: "))
             elif choice == '6':
-                list_policies()
+                list_roles()
             elif choice == '7':
                 role_name = input("Enter rolename: ")
                 policy_arn = input("Enter policy ARN: ")
                 attach_role_policy(role_name, policy_arn)
             elif choice == '8':
                 role_name = input('Enter rolename: ')
-                policy_arn = input('Enter policy ')
+                policy_arn = input('Enter policy ARN: ')
                 detach_role_policy(role_name, policy_arn)
             elif choice == '9':
                 policy_name = input('Enter policyname: ')
-                policy_document = documents
-                if validate_json(str(policy_document)):
-                    create_policy(policy_name, policy_document)
+                if validate_json(json.dumps(documents)):
+                    create_policy(policy_name, documents)
                 else:
                     print("Invalid JSON format")
             elif choice == '10':
