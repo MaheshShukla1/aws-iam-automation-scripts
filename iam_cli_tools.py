@@ -197,6 +197,21 @@ documents = {
     ]
 }
 
+trust_policy = {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "sts:AssumeRole",
+            "Principal": {
+                "AWS": "851725195108"
+            },
+            "Condition": {}
+        }
+    ]
+}
+
+
 def main():
     """
     Main function to handle user input and execute corresponding IAM operations.
@@ -229,7 +244,7 @@ def main():
                 delete_user(username)
             elif choice == '4':
                 role_name = input('Enter rolename: ')
-                assume_role_policy_document = input('Enter assume role policy document JSON: ')
+                assume_role_policy_document = trust_policy
                 if validate_json(assume_role_policy_document):
                     create_role(role_name, json.loads(assume_role_policy_document))
                 else:
