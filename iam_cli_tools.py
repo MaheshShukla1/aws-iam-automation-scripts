@@ -26,7 +26,7 @@ def delete_user(user_name):
     except Exception as e:
         logging.error(f'Error deleting the user {user_name}: {e}')
 
-def create_role(role_name, assume_role_policy_document):
+def create_role(role_name, trust_policy):
     """
     Create a new IAM Role
 
@@ -36,7 +36,7 @@ def create_role(role_name, assume_role_policy_document):
     try:
         response = iam.create_role(
             RoleName=role_name,
-            AssumeRolePolicyDocument=json.dumps(assume_role_policy_document)
+            AssumeRolePolicyDocument= json.dumps(trust_policy)
         )
         logging.info(f'Role: {role_name} created successfully.')
         logging.info(response)
