@@ -135,6 +135,35 @@ def validate_json(json_str):
     except json.JSONDecodeError as e:
         logging.error(f"Invalid JSON: {e}")
         return False
+    
+def create_group(group_name):
+    try:
+        response = iam.create_group(GroupName=group_name)
+        logging.info(f'Group {group_name} created successfully.')
+        return response
+    except Exception as e:
+        logging.error(f'Error creating group: {group_name}: {e}')
+
+def delete_group(group_name):
+    try:
+        # Detach all policies
+        attached_policies = iam.list_attached_group_policies(GroupName=group_name)
+        for policy in attached_policies['AttachedPolicies']:
+            iam.detach_group_policy(GroupName=group_name, PolicyArn=policy['PolicyArn'])
+            logging.info(f'Policy {policy["PolicyArn"]} detached from group {group_name} successfully.')
+
+        # Remove all users
+        group_members = iam.get_group(GroupName=group_name)
+        for user in group_members['Users']:
+            iam.remove_user_from_group(GroupName=group_name, UserName=user['UserName'])
+            logging.info(f'User {user["UserName"]} removed from group {group_name}.')
+
+        # Finally delete the group
+        response = iam.delete_group(GroupName=group_name)
+        logging.info(f'Group {group_name} deleted successfully.')
+        return response
+    except Exception as e:
+        logging.error(f'Error deleting the group {group_name}: {e}')
 
 documents = {
     "Version": "2012-10-17",
@@ -187,19 +216,21 @@ trust_policy = {
 def main():
     while True:
         try:
-            print("\n Select an option")
+            print("\nSelect an option")
             print("1. Create User")
-            print("2. List User")
+            print("2. List Users")
             print("3. Delete User")
             print("4. Create Role")
             print("5. Delete Role")
             print("6. List Roles")
             print("7. Attach Policy to Role")
-            print("8. Detach Policy to Role")
+            print("8. Detach Policy from Role")
             print("9. Create Policy")
-            print("10. List policies")
+            print("10. List Policies")
             print("11. Delete Policy")
-            print("Exit")
+            print("12. Create Group")
+            print("13. Delete Group")
+            print("14. Exit")
 
             choice = input("Enter your choice: ")
 
@@ -212,25 +243,25 @@ def main():
                 username = input('Enter username: ')
                 delete_user(username)
             elif choice == '4':
-                role_name = input('Enter rolename: ')
+                role_name = input('Enter role name: ')
                 if validate_json(json.dumps(trust_policy)):
                     create_role(role_name, trust_policy)
                 else:
                     print("Invalid JSON format")
             elif choice == '5':
-                delete_role(input("Enter rolename: "))
+                delete_role(input("Enter role name: "))
             elif choice == '6':
                 list_roles()
             elif choice == '7':
-                role_name = input("Enter rolename: ")
+                role_name = input("Enter role name: ")
                 policy_arn = input("Enter policy ARN: ")
                 attach_role_policy(role_name, policy_arn)
             elif choice == '8':
-                role_name = input('Enter rolename: ')
-                policy_arn = input('Enter policy ARN: ')
+                role_name = input("Enter role name: ")
+                policy_arn = input("Enter policy ARN: ")
                 detach_role_policy(role_name, policy_arn)
             elif choice == '9':
-                policy_name = input('Enter policyname: ')
+                policy_name = input("Enter policy name: ")
                 if validate_json(json.dumps(documents)):
                     create_policy(policy_name, documents)
                 else:
@@ -238,15 +269,20 @@ def main():
             elif choice == '10':
                 list_policies()
             elif choice == '11':
-                policy_arn = input('Enter policy ARN: ')
+                policy_arn = input("Enter policy ARN: ")
                 delete_policy(policy_arn)
             elif choice == '12':
-                print("Exiting...")
+                group_name = input("Enter group name: ")
+                create_group(group_name)
+            elif choice == '13':
+                group_name = input("Enter group name: ")
+                delete_group(group_name)
+            elif choice == '14':
                 break
             else:
-                print("Invalid choice")
+                print("Invalid choice. Please enter a number between 1 and 14.")
         except Exception as e:
-            logging.error(f"Unexpected error: {e}")
+            logging.error(f'An error occurred: {e}')
 
 if __name__ == "__main__":
     main()
