@@ -1,6 +1,7 @@
 import boto3
 import logging
 import json
+from botocore.exceptions import ClientError
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -66,6 +67,20 @@ def delete_user(user_name):
         logging.error(f'User {user_name} does not exist.')
     except Exception as e:
         logging.error(f'Error deleting the user {user_name}: {e}')
+
+def attach_user_policy(user_name,policy_arn):
+    try:
+        response = iam.attach_user_policy(
+            UserName=user_name,
+            PolicyArn=policy_arn
+        )
+        logging.info(f'Policy {policy_arn} attached to user {user_name} successfully.')
+        return response
+    except ClientError as e:
+        logging.error(f'Aws ClientError: {e.response["Error"]["Message"]}')
+    except Exception as e:
+        logging.error(f'Unexpected error: {e}') 
+    return None
 
 def create_role(role_name, trust_policy):
     if validate_json(json.dumps(trust_policy)):
