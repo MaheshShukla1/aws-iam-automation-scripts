@@ -48,6 +48,16 @@ def delete_user(user_name):
             iam.detach_user_policy(UserName=user_name, PolicyArn=policy['PolicyArn'])
             logging.info(f'Policy {policy["PolicyArn"]} detached from user {user_name} successfully.')
 
+        # Delete MFA devices
+        mfa_devices = iam.list_mfa_devices(UserName=user_name)
+        if 'MFADevices' in mfa_devices and mfa_devices['MFADevices']:
+            for mfa_device in mfa_devices['MFADevices']:
+                iam.deactivate_mfa_device(UserName=user_name, SerialNumber=mfa_device['SerialNumber'])
+                iam.delete_virtual_mfa_device(SerialNumber=mfa_device['SerialNumber'])
+                logging.info(f'MFA device {mfa_device["SerialNumber"]} for user {user_name} deleted successfully.')
+        else:
+            logging.info(f'No MFA devices found for user {user_name}.')
+
         # Finally delete the user
         response = iam.delete_user(UserName=user_name)
         logging.info(f'User {user_name} deleted successfully.')
