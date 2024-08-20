@@ -1,32 +1,46 @@
-# AWS IAM Automation Scripts
+# 🚀 AWS IAM Automation Scripts
 
-This repository contains scripts for automating AWS Identity and Access Management (IAM) tasks using Python with Boto3 and AWS CLI. The automation includes creating and managing IAM policies, roles, and their attachments.
+This repository provides a comprehensive suite of scripts for automating AWS Identity and Access Management (IAM) tasks using Python with Boto3 and AWS CLI. These automation scripts cover the creation and management of IAM policies, roles, and their attachments, making it easier to manage AWS IAM resources efficiently.
 
-## 📂 **Contents**
+## 📂 **Table of Contents**
 
-1. **Python Scripts**
-   - [Create User](#create-user)
-   - [Delete User](#delete-user)
-   - [Create Group](#create-group)
-   - [Delete Group](#delete-group)
-   - [Create Policy](#create-policy)
-   - [Delete Policy](#delete-policy)
-   - [Attach User Policy](#attach-user-policy)
-   - [Detach User Policy](#detach-user-policy)
-   - [Create Role](#create-role)
-   - [Delete Role](#delete-role)
-   - [Atach Role Policy](#attach-role-policy)
-   - [Detach Role Policy](#detach-role-policy)
-   
-3. **Shell Script**
-   - `iam_automation.sh`
+1. [Python Scripts](#python-scripts)
+    
+    - [Create User](#create-user)
+    - [Delete User](#delete-user)
+    - [Create Group](#create-group)
+    - [Delete Group](#delete-group)
+    - [Create Policy](#create-policy)
+    - [Delete Policy](#delete-policy)
+    - [Attach User Policy](#attach-user-policy)
+    - [Detach User Policy](#detach-user-policy)
+    - [Create Role](#create-role)
+    - [Delete Role](#delete-role)
+    - [Attach Role Policy](#attach-role-policy)
+    - [Detach Role Policy](#detach-role-policy)
+2. [Shell Script](#shell-script)
+    
+    - `iam_automation.sh`
+3. [Setup](#setup)
+    
+    - [Install Python Packages](#install-python-packages)
+    - [Configure AWS Credentials](#configure-aws-credentials)
+4. [Notes](#notes)
+    
+5. [Contact](#contact)
+    
 
-## 📜 **Python Scripts**
+## 🐍 **Python Scripts**
+
 ### Create User
-Creates an IAM User.
+
+Automate the creation of an IAM User.
 
 ```python
+import boto3
+
 def create_user(user_name):
+    iam_client = boto3.client('iam')
     try:
         response = iam_client.create_user(UserName=user_name)
         print(f'User {user_name} created successfully.')
@@ -37,17 +51,20 @@ def create_user(user_name):
 create_user('Alice')
 ```
 **Usage:**
-```python
-python create_user.py
+```bash
+   python create_user.py
 ```
+
 ### Delete User
-Delete an IAM User.
+
+Easily automate the deletion of an IAM User.
 
 ```python
 import boto3
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 def delete_user(user_name):
     iam_client = boto3.client('iam')
     try:
@@ -60,23 +77,24 @@ def delete_user(user_name):
 delete_user('Alice')
 ```
 **Usage:**
-```python
+```bash
 python delete_user.py
 ```
-
 ### Create Group
-Creates an IAM Group.
+
+Automate the creation of an IAM Group.
 
 ```python
 import boto3
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 def create_group(group_name):
     iam_client = boto3.client('iam')
     try:
         response = iam_client.create_group(GroupName=group_name)
-        logging.info(f'Group {group_name} created succesfully.')
+        logging.info(f'Group {group_name} created successfully.')
         logging.info(response)
     except Exception as e:
         logging.error(f'Error creating group: {e}')
@@ -84,35 +102,35 @@ def create_group(group_name):
 create_group('DeveloperAdmin')
 ```
 **Usage:**
-```python
+```bash
 python create_group.py
 ```
+
 ### Delete Group
-Delete an IAM Group.
+
+Automate the deletion of an IAM Group.
 
 ```python
 import boto3
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 def delete_group(group_name):
     iam_client = boto3.client('iam')
     try:
         response = iam_client.delete_group(GroupName=group_name)
-        logging.info(f'Deleting Group {group_name} deleted successfully.')
+        logging.info(f'Group {group_name} deleted successfully.')
         logging.info(response)
     except Exception as e:
         logging.error(f'Error deleting group: {e}')
 
 delete_group('DeveloperAdmin')
 ```
-**Usage:**
-```python
-python delete_group.py
-```
 
 ### Create Policy
-Creates an IAM policy.
+
+Automate the creation of an IAM Policy with a custom policy document.
 
 ```python
 import boto3
@@ -143,15 +161,21 @@ policy_document = {
 
 create_policy('S3FullAccessPolicy', policy_document)
 ```
-
 **Usage:**
 ```bash
 python create_policy.py
 ```
-## Delete Policy
-Delete an IAM Policy
+
+### Delete Policy
+
+Automate the deletion of an IAM Policy.
 
 ```python
+import boto3
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 def delete_policy(policy_arn):
     iam_client = boto3.client('iam')
     try:
@@ -159,16 +183,18 @@ def delete_policy(policy_arn):
         logging.info(f'Policy {policy_arn} deleted successfully.')
         logging.info(response)
     except Exception as e:
-        print(f'Error deleting policy: {e}')
-```
+        logging.error(f'Error deleting policy: {e}')
 
-***Usage***
+delete_policy('arn:aws:iam::aws:policy/S3FullAccessPolicy')
+```
+**Usage:**
 ```bash
 python delete_policy.py
 ```
 
 ### Attach User Policy
-Attaches a policy to user.
+
+Automate attaching a policy to an IAM User.
 
 ```python
 import boto3
@@ -187,13 +213,15 @@ def attach_user_policy(user_name, policy_arn):
 
 attach_user_policy('JohnDoe', 'arn:aws:iam::aws:policy/S3FullAccessPolicy')
 ```
+
 **Usage:**
 ```bash
-python attach_user_policy.py
+python delete_policy.py
 ```
 
 ### Detach User Policy
-Detaches a policy from user.
+
+Automate detaching a policy from an IAM User.
 
 ```python
 import boto3
@@ -213,13 +241,14 @@ def detach_user_policy(user_name, policy_arn):
 detach_user_policy('JohnDoe', 'arn:aws:iam::aws:policy/S3FullAccessPolicy')
 ```
 
-**Usage**
+**Usage:**
 ```bash
 python detach_user_policy.py
 ```
 
 ### Create Role
-Creates an IAM Role with a trust policy.
+
+Automate the creation of an IAM Role with a specified trust policy.
 
 ```python
 import boto3
@@ -252,12 +281,15 @@ trust_policy = {
 
 create_role('EC2S3AccessRole', trust_policy)
 ```
-**Usage**
+
+**Usage:**
 ```bash
 python create_role.py
 ```
-### Delete Role 
-Delets an IAM Role.
+
+### Delete Role
+
+Automate the deletion of an IAM Role.
 
 ```python
 import boto3
@@ -275,13 +307,16 @@ def delete_role(role_name):
 
 delete_role('EC2S3AccessRole')
 ```
-**Usage**
+
+**Usage:**
 ```bash
 python delete_role.py
 ```
 
-### Atach Role Policy
-Attaches a Role policy to a role.
+### Attach Role Policy
+
+Automate attaching a policy to an IAM Role.
+
 
 ```python
 import boto3
@@ -300,13 +335,15 @@ def attach_role_policy(role_name, policy_arn):
 
 attach_role_policy('EC2S3AccessRole', 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess')
 ```
-**Usage**
+
+**Usage:**
 ```bash
 python attach_role_policy.py
 ```
 
 ### Detach Role Policy
-Detaches a Role policy from a role.
+
+Automate detaching a policy from an IAM Role.
 
 ```python
 import boto3
@@ -325,30 +362,31 @@ def detach_role_policy(role_name, policy_arn):
 
 detach_role_policy('EC2S3AccessRole', 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess')
 ```
-**Usage**
+
+**Usage:**
 ```bash
 python detach_role_policy.py
 ```
 
-## 🛠️ Shell Script
+## 🛠️ **Shell Script**
 
 ### `iam_automation.sh`
-Shell script to run the Python automation script.
 
-**Usage**
-```bash
-chmod +x iam_automation.sh
-./iam_automation.sh
+A shell script to run the Python automation scripts.
 ```
-Example Code:
-```bash
 #!/bin/bash
 
 # Run the Python script
 python iam_automation.py
 ```
+**Usage:**
+```bash
+chmod +x iam_automation.sh
+./iam_automation.sh
+```
 
 ### `iam_automation.py`
+
 Combines role creation and deletion automation in one script.
 
 ```python
@@ -397,26 +435,40 @@ if __name__ == '__main__':
     # Uncomment to delete the role
     # delete_iam_role('EC2S3AccessRole')
 ```
-**Usage**
+
+**Usage:**
 ```bash
 python iam_automation.py
 ```
-## `🔧 Setup`
-#### `Install Python Packages`
+
+## 🔧 **Setup**
+
+### Install Python Packages
+
+Ensure you have the necessary Python packages installed.
+
 ```bash
 pip install boto3
 ```
-#### `Configure AWS Credentials`
+
+### Configure AWS Credentials
+
+Set up your AWS credentials.
+
 ```bash
 aws configure --profile newprofile
 ```
 
-#### `Run Scripts`
-For Python scripts: Execute directly or use the shell script to automate tasks.
+### Run Scripts
 
-## `📜 Notes`
-Replace placeholder values (e.g., role names, policy ARNs) with your actual AWS resources.
-Ensure you have the necessary IAM permissions to execute these tasks.
+Execute the Python scripts directly or use the provided shell script to automate tasks.
 
-## `📬 Contact`
-For any questions or contributions, please reach out via [Linkedin](https://www.linkedin.com/in/maheshshukla01/) or create an issue in this repository.
+## 📜 **Notes**
+
+- Replace placeholder values (e.g., role names, policy ARNs) with your actual AWS resources.
+- Ensure you have the necessary IAM permissions to execute these tasks.
+
+## 📬 **Contact**
+
+For any questions or contributions, feel free to connect via [LinkedIn](https://www.linkedin.com/in/maheshshukla01/) or create an issue in this repository.
+
