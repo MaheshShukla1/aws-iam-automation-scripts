@@ -5,7 +5,6 @@ This repository provides a comprehensive suite of scripts for automating AWS Ide
 ## 📂 **Table of Contents**
 
 1. [Python Scripts](#python-scripts)
-    
     - [Create User](#create-user)
     - [Delete User](#delete-user)
     - [Create Group](#create-group)
