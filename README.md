@@ -28,7 +28,6 @@ This repository provides a comprehensive suite of scripts for automating AWS Ide
     
 5. [Contact](#contact)
     
-
 ## 🐍 **Python Scripts**
 
 ### Create User
