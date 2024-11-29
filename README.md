@@ -31,6 +31,7 @@ This repository provides a comprehensive suite of scripts for automating AWS Ide
 ## 🐍 **Python Scripts**
 ### Create User
 Automate the creation of an IAM User.
+
 ```python
 import boto3
 
@@ -44,6 +45,7 @@ def create_user(user_name):
         print(f'Error creating user: {e}')
 
 create_user('Alice')
+
 ```
 **Usage:**
 ```bash
