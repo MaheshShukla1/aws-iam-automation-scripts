@@ -43,7 +43,6 @@ def create_user(user_name):
         print(f'Error creating user: {e}')
 
 create_user('Alice')
-
 ```
 **Usage:**
 ```bash
