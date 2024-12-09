@@ -67,6 +67,7 @@ def delete_user(user_name):
         logging.error(f'Error deleting user: {e}')
 
 delete_user('Alice')
+
 ```
 **Usage:**
 ```bash
@@ -74,7 +75,6 @@ python delete_user.py
 ```
 
 ### Create Group
-
 Automate the creation of an IAM Group.
 ```python
 import boto3
@@ -121,7 +121,6 @@ delete_group('DeveloperAdmin')
 ```
 
 ### Create Policy
-
 Automate the creation of an IAM Policy with a custom policy document.
 
 ```python
