@@ -67,7 +67,6 @@ def delete_user(user_name):
         logging.error(f'Error deleting user: {e}')
 
 delete_user('Alice')
-
 ```
 **Usage:**
 ```bash
@@ -99,7 +98,6 @@ python create_group.py
 ```
 
 ### Delete Group
-
 Automate the deletion of an IAM Group.
 
 ```python
