@@ -50,7 +50,6 @@ create_user('Alice')
 ```
 
 ### Delete User
-
 Easily automate the deletion of an IAM User.
 ```python
 import boto3
