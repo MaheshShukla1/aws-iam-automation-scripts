@@ -154,7 +154,6 @@ python create_policy.py
 ```
 
 ### Delete Policy
-
 Automate the deletion of an IAM Policy.
 
 ```python
@@ -207,7 +206,6 @@ python delete_policy.py
 ```
 
 ### Detach User Policy
-
 Automate detaching a policy from an IAM User.
 
 ```python
