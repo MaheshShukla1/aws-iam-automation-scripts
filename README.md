@@ -155,7 +155,6 @@ python create_policy.py
 
 ### Delete Policy
 Automate the deletion of an IAM Policy.
-
 ```python
 import boto3
 import logging
@@ -179,7 +178,6 @@ python delete_policy.py
 ```
 
 ### Attach User Policy
-
 Automate attaching a policy to an IAM User.
 
 ```python
@@ -207,7 +205,6 @@ python delete_policy.py
 
 ### Detach User Policy
 Automate detaching a policy from an IAM User.
-
 ```python
 import boto3
 
