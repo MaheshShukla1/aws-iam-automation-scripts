@@ -229,7 +229,6 @@ python detach_user_policy.py
 ### Create Role
 
 Automate the creation of an IAM Role with a specified trust policy.
-
 ```python
 import boto3
 import json
@@ -270,7 +269,6 @@ python create_role.py
 ### Delete Role
 
 Automate the deletion of an IAM Role.
-
 ```python
 import boto3
 
@@ -296,8 +294,6 @@ python delete_role.py
 ### Attach Role Policy
 
 Automate attaching a policy to an IAM Role.
-
-
 ```python
 import boto3
 
@@ -324,7 +320,6 @@ python attach_role_policy.py
 ### Detach Role Policy
 
 Automate detaching a policy from an IAM Role.
-
 ```python
 import boto3
 
@@ -351,7 +346,6 @@ python detach_role_policy.py
 ## 🛠️ **Shell Script**
 
 ### `iam_automation.sh`
-
 A shell script to run the Python automation scripts.
 ```
 #!/bin/bash
