@@ -100,7 +100,6 @@ python create_group.py
 
 ### Delete Group
 Automate the deletion of an IAM Group.
-
 ```python
 import boto3
 import logging
@@ -269,7 +268,6 @@ python create_role.py
 ```
 
 ### Delete Role
-
 Automate the deletion of an IAM Role.
 ```python
 import boto3
@@ -294,7 +292,6 @@ python delete_role.py
 ```
 
 ### Attach Role Policy
-
 Automate attaching a policy to an IAM Role.
 ```python
 import boto3
@@ -363,7 +360,6 @@ chmod +x iam_automation.sh
 ### `iam_automation.py`
 
 Combines role creation and deletion automation in one script.
-
 ```python
 import boto3
 import json
