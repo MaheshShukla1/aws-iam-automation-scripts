@@ -178,7 +178,6 @@ python delete_policy.py
 ```
 
 ### Attach User Policy
-
 Automate attaching a policy to an IAM User.
 ```python
 import boto3
@@ -204,6 +203,7 @@ python delete_policy.py
 ```
 
 ### Detach User Policy
+
 Automate detaching a policy from an IAM User.
 ```python
 import boto3
@@ -358,7 +358,6 @@ chmod +x iam_automation.sh
 ```
 
 ### `iam_automation.py`
-
 Combines role creation and deletion automation in one script.
 ```python
 import boto3
