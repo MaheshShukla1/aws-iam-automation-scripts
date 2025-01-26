@@ -153,6 +153,7 @@ python create_policy.py
 ```
 
 ### Delete Policy
+
 Automate the deletion of an IAM Policy.
 ```python
 import boto3
@@ -177,6 +178,7 @@ python delete_policy.py
 ```
 
 ### Attach User Policy
+
 Automate attaching a policy to an IAM User.
 ```python
 import boto3
@@ -202,7 +204,6 @@ python delete_policy.py
 ```
 
 ### Detach User Policy
-
 Automate detaching a policy from an IAM User.
 ```python
 import boto3
@@ -228,7 +229,6 @@ python detach_user_policy.py
 ```
 
 ### Create Role
-
 Automate the creation of an IAM Role with a specified trust policy.
 ```python
 import boto3
