@@ -97,6 +97,7 @@ python create_group.py
 ```
 
 ### Delete Group
+
 Automate the deletion of an IAM Group.
 ```python
 import boto3
@@ -117,7 +118,6 @@ delete_group('DeveloperAdmin')
 ```
 
 ### Create Policy
-
 Automate the creation of an IAM Policy with a custom policy document.
 ```python
 import boto3
@@ -154,6 +154,7 @@ python create_policy.py
 ```
 
 ### Delete Policy
+
 Automate the deletion of an IAM Policy.
 ```python
 import boto3
@@ -228,6 +229,7 @@ python detach_user_policy.py
 ```
 
 ### Create Role
+
 Automate the creation of an IAM Role with a specified trust policy.
 ```python
 import boto3
