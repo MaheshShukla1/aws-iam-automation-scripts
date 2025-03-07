@@ -30,7 +30,6 @@ This repository provides a comprehensive suite of scripts for automating AWS Ide
 ## 🐍 **Python Scripts**
 
 ### Create User
-
 Automate the creation of an IAM User.
 ```python
 import boto3
@@ -99,6 +98,7 @@ python create_group.py
 ```
 
 ### Delete Group
+
 Automate the deletion of an IAM Group.
 ```python
 import boto3
