@@ -28,7 +28,6 @@ This repository provides a comprehensive suite of scripts for automating AWS Ide
 5. [Contact](#contact)
     
 ## 🐍 **Python Scripts**
-
 ### Create User
 Automate the creation of an IAM User.
 ```python
@@ -74,7 +73,6 @@ python delete_user.py
 ```
 
 ### Create Group
-
 Automate the creation of an IAM Group.
 ```python
 import boto3
@@ -99,7 +97,6 @@ python create_group.py
 ```
 
 ### Delete Group
-
 Automate the deletion of an IAM Group.
 ```python
 import boto3
