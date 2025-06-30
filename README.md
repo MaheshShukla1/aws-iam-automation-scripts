@@ -157,6 +157,7 @@ python create_policy.py
 ```
 
 ### Delete Policy
+
 Automate the deletion of an IAM Policy.
 ```python
 import boto3
