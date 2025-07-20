@@ -52,20 +52,69 @@ create_user('Alice')
 Easily automate the deletion of an IAM User.
 ```python
 import boto3
+import botocore.exceptions
 import logging
+import sys
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Setup logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
-def delete_user(user_name):
-    iam_client = boto3.client('iam')
+def get_iam_client(profile_name=None, region_name='us-east-1'):
+    """Create and return a Boto3 IAM client."""
     try:
-        response = iam_client.delete_user(UserName=user_name)
-        logging.info(f'User {user_name} deleted successfully.')
-        logging.info(response)
-    except Exception as e:
-        logging.error(f'Error deleting user: {e}')
+        if profile_name:
+            boto3.setup_default_session(profile_name=profile_name)
+        return boto3.client('iam', region_name=region_name)
+    except botocore.exceptions.BotoCoreError as e:
+        logging.error(f'Error creating IAM client: {e}')
+        sys.exit(1)
 
-delete_user('Alice')
+def delete_user(iam_client, user_name):
+    """Delete an IAM user safely."""
+    try:
+        # Check if user exists
+        iam_client.get_user(UserName=user_name)
+
+        # Optional: Detach policies, delete login profile, etc.
+        # This is required before deleting user with attached resources
+
+        # Example: Delete login profile (if it exists)
+        try:
+            iam_client.delete_login_profile(UserName=user_name)
+            logging.info(f"Deleted login profile for user: {user_name}")
+        except iam_client.exceptions.NoSuchEntityException:
+            pass  # Profile didn't exist
+
+        # Example: Detach all attached user policies
+        policies = iam_client.list_attached_user_policies(UserName=user_name)
+        for policy in policies.get('AttachedPolicies', []):
+            iam_client.detach_user_policy(
+                UserName=user_name,
+                PolicyArn=policy['PolicyArn']
+            )
+            logging.info(f"Detached policy {policy['PolicyName']} from {user_name}")
+
+        # Now delete the user
+        iam_client.delete_user(UserName=user_name)
+        logging.info(f'User {user_name} deleted successfully.')
+
+    except iam_client.exceptions.NoSuchEntityException:
+        logging.error(f'User {user_name} does not exist.')
+    except botocore.exceptions.ClientError as e:
+        logging.error(f'Boto3 client error: {e}')
+    except Exception as e:
+        logging.exception(f'Unexpected error occurred while deleting user {user_name}')
+
+def main():
+    user_name = 'practice-user'
+    iam_client = get_iam_client()  # Optionally pass profile_name here
+    delete_user(iam_client, user_name)
+
+if __name__ == '__main__':
+    main()
 ```
 **Usage:**
 ```bash
