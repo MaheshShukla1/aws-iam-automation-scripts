@@ -166,7 +166,6 @@ delete_group('DeveloperAdmin')
 ```
 
 ### Create Policy
-
 Automate the creation of an IAM Policy with a custom policy document.
 ```python
 import boto3
