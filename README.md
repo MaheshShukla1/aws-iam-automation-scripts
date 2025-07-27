@@ -50,7 +50,6 @@ create_user('Alice')
 ```
 
 ### Delete User
-
 Easily automate the deletion of an IAM User.
 ```python
 import boto3
@@ -124,7 +123,6 @@ python delete_user.py
 ```
 
 ### Create Group
-
 Automate the creation of an IAM Group.
 ```python
 import boto3
@@ -149,7 +147,6 @@ python create_group.py
 ```
 
 ### Delete Group
-
 Automate the deletion of an IAM Group.
 ```python
 import boto3
@@ -230,6 +227,7 @@ python delete_policy.py
 ```
 
 ### Attach User Policy
+
 Automate attaching a policy to an IAM User.
 ```python
 import boto3
