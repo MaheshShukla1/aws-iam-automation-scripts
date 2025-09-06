@@ -50,7 +50,6 @@ create_user('Alice')
 ```
 
 ### Delete User
-
 Easily automate the deletion of an IAM User.
 ```python
 import boto3
@@ -74,46 +73,78 @@ def get_iam_client(profile_name=None, region_name='us-east-1'):
         logging.error(f'Error creating IAM client: {e}')
         sys.exit(1)
 
-def delete_user(iam_client, user_name):
-    """Delete an IAM user safely."""
+def delete_user_completely(iam, user):
+    """Fully delete an IAM user with all attached entities."""
     try:
-        # Check if user exists
-        iam_client.get_user(UserName=user_name)
+        iam.get_user(UserName=user)
+        logging.info(f'Found user: {user}')
 
-        # Optional: Detach policies, delete login profile, etc.
-        # This is required before deleting user with attached resources
+        # 1. Delete access keys
+        keys = iam.list_access_keys(UserName=user).get('AccessKeyMetadata', [])
+        for key in keys:
+            iam.delete_access_key(UserName=user, AccessKeyId=key['AccessKeyId'])
+            logging.info(f"Deleted access key: {key['AccessKeyId']}")
 
-        # Example: Delete login profile (if it exists)
+        # 2. Delete login profile
         try:
-            iam_client.delete_login_profile(UserName=user_name)
-            logging.info(f"Deleted login profile for user: {user_name}")
-        except iam_client.exceptions.NoSuchEntityException:
-            pass  # Profile didn't exist
+            iam.delete_login_profile(UserName=user)
+            logging.info("Deleted login profile")
+        except iam.exceptions.NoSuchEntityException:
+            pass
 
-        # Example: Detach all attached user policies
-        policies = iam_client.list_attached_user_policies(UserName=user_name)
-        for policy in policies.get('AttachedPolicies', []):
-            iam_client.detach_user_policy(
-                UserName=user_name,
-                PolicyArn=policy['PolicyArn']
-            )
-            logging.info(f"Detached policy {policy['PolicyName']} from {user_name}")
+        # 3. Delete inline policies
+        inline_policies = iam.list_user_policies(UserName=user).get('PolicyNames', [])
+        for policy_name in inline_policies:
+            iam.delete_user_policy(UserName=user, PolicyName=policy_name)
+            logging.info(f"Deleted inline policy: {policy_name}")
 
-        # Now delete the user
-        iam_client.delete_user(UserName=user_name)
-        logging.info(f'User {user_name} deleted successfully.')
+        # 4. Detach managed policies
+        attached_policies = iam.list_attached_user_policies(UserName=user).get('AttachedPolicies', [])
+        for policy in attached_policies:
+            iam.detach_user_policy(UserName=user, PolicyArn=policy['PolicyArn'])
+            logging.info(f"Detached managed policy: {policy['PolicyName']}")
 
-    except iam_client.exceptions.NoSuchEntityException:
-        logging.error(f'User {user_name} does not exist.')
+        # 5. Deactivate & delete MFA devices
+        mfa_devices = iam.list_mfa_devices(UserName=user).get('MFADevices', [])
+        for mfa in mfa_devices:
+            serial = mfa['SerialNumber']
+            iam.deactivate_mfa_device(UserName=user, SerialNumber=serial)
+            iam.delete_virtual_mfa_device(SerialNumber=serial)
+            logging.info(f"Deleted MFA device: {serial}")
+
+        # 6. Delete SSH public keys
+        ssh_keys = iam.list_ssh_public_keys(UserName=user).get('SSHPublicKeys', [])
+        for ssh in ssh_keys:
+            iam.delete_ssh_public_key(UserName=user, SSHPublicKeyId=ssh['SSHPublicKeyId'])
+            logging.info(f"Deleted SSH public key: {ssh['SSHPublicKeyId']}")
+
+        # 7. Delete service-specific credentials (e.g., CodeCommit)
+        service_creds = iam.list_service_specific_credentials(UserName=user).get('ServiceSpecificCredentials', [])
+        for cred in service_creds:
+            iam.delete_service_specific_credential(UserName=user, ServiceSpecificCredentialId=cred['ServiceSpecificCredentialId'])
+            logging.info(f"Deleted service-specific credential: {cred['ServiceSpecificCredentialId']}")
+
+        # 8. Delete signing certificates
+        certs = iam.list_signing_certificates(UserName=user).get('Certificates', [])
+        for cert in certs:
+            iam.delete_signing_certificate(UserName=user, CertificateId=cert['CertificateId'])
+            logging.info(f"Deleted signing certificate: {cert['CertificateId']}")
+
+        # 🔥 Final kill
+        iam.delete_user(UserName=user)
+        logging.info(f"✅ User '{user}' deleted successfully.")
+
+    except iam.exceptions.NoSuchEntityException:
+        logging.warning(f"User '{user}' does not exist.")
     except botocore.exceptions.ClientError as e:
-        logging.error(f'Boto3 client error: {e}')
+        logging.error(f"AWS ClientError: {e}")
     except Exception as e:
-        logging.exception(f'Unexpected error occurred while deleting user {user_name}')
+        logging.exception(f"Unexpected error while deleting user '{user}'")
 
 def main():
-    user_name = 'practice-user'
-    iam_client = get_iam_client()  # Optionally pass profile_name here
-    delete_user(iam_client, user_name)
+    user_name = 'practice-user'  # Change as needed
+    iam_client = get_iam_client()
+    delete_user_completely(iam_client, user_name)
 
 if __name__ == '__main__':
     main()
