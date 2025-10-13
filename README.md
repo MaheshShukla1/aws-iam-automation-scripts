@@ -29,7 +29,6 @@ This repository provides a comprehensive suite of scripts for automating AWS Ide
    
 ## 🐍 **Python Scripts**
 ### Create User
-
 Automate the creation of an IAM User.
 ```python
 import boto3
@@ -50,6 +49,7 @@ create_user('Alice')
 ```
 
 ### Delete User
+
 Easily automate the deletion of an IAM User.
 ```python
 import boto3
@@ -155,7 +155,6 @@ python delete_user.py
 ```
 
 ### Create Group
-
 Automate the creation of an IAM Group.
 ```python
 import boto3
@@ -200,7 +199,6 @@ delete_group('DeveloperAdmin')
 ```
 
 ### Create Policy
-
 Automate the creation of an IAM Policy with a custom policy document.
 ```python
 import boto3
