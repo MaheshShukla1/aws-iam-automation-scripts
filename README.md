@@ -445,48 +445,125 @@ Combines role creation and deletion automation in one script.
 ```python
 import boto3
 import json
+import botocore
 
-def create_iam_role(role_name, assume_role_policy):
-    iam_client = boto3.client('iam')
+iam = boto3.client("iam")
+
+
+# ------------------------------------------------------------
+#  CREATE ROLE (Trust Policy + Attach Managed Policies)
+# ------------------------------------------------------------
+def create_iam_role(role_name, trust_policy, managed_policies=None):
     try:
-        response = iam_client.create_role(
+        print(f"\n🔹 Creating role: {role_name}")
+
+        # Create role
+        iam.create_role(
             RoleName=role_name,
-            AssumeRolePolicyDocument=json.dumps(assume_role_policy)
+            AssumeRolePolicyDocument=json.dumps(trust_policy)
         )
-        print(f'Role {role_name} created successfully.')
-        print(response)
-    except Exception as e:
-        print(f'Error creating role: {e}')
+        print(f"✅ Role created: {role_name}")
 
+    except iam.exceptions.EntityAlreadyExistsException:
+        print(f"⚠️ Role already exists: {role_name}")
+    except Exception as e:
+        print(f"❌ Error creating role: {e}")
+        return
+
+    # Attach policies
+    if managed_policies:
+        for policy_arn in managed_policies:
+            try:
+                print(f"🔹 Attaching policy: {policy_arn}")
+                iam.attach_role_policy(
+                    RoleName=role_name,
+                    PolicyArn=policy_arn
+                )
+            except Exception as e:
+                print(f"❌ Error attaching {policy_arn}: {e}")
+
+    print("✅ Role creation completed!\n")
+
+
+
+# ------------------------------------------------------------
+#  SAFE DELETE ROLE (Handles ALL cleanup)
+# ------------------------------------------------------------
 def delete_iam_role(role_name):
-    iam_client = boto3.client('iam')
+    print(f"\n🔹 Deleting role safely: {role_name}")
+
+    # ------- 1. Detach Managed Policies -------
     try:
-        response = iam_client.delete_role(
-            RoleName=role_name
-        )
-        print(f'Role {role_name} deleted successfully.')
-        print(response)
+        attached = iam.list_attached_role_policies(RoleName=role_name)
+        for pol in attached.get("AttachedPolicies", []):
+            print(f"🔸 Detaching policy: {pol['PolicyArn']}")
+            iam.detach_role_policy(RoleName=role_name, PolicyArn=pol["PolicyArn"])
     except Exception as e:
-        print(f'Error deleting role: {e}')
+        print(f"⚠️ Error detaching policies: {e}")
 
-# Example trust policy for EC2
-trust_policy = {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": {
-                "Service": "ec2.amazonaws.com"
-            },
-            "Action": "sts:AssumeRole"
-        }
+    # ------- 2. Delete Inline Policies -------
+    try:
+        inline = iam.list_role_policies(RoleName=role_name)
+        for pol_name in inline.get("PolicyNames", []):
+            print(f"🔸 Deleting inline policy: {pol_name}")
+            iam.delete_role_policy(RoleName=role_name, PolicyName=pol_name)
+    except Exception as e:
+        print(f"⚠️ Error deleting inline policies: {e}")
+
+    # ------- 3. Remove from Instance Profiles -------
+    try:
+        profiles = iam.list_instance_profiles_for_role(RoleName=role_name)
+        for prof in profiles.get("InstanceProfiles", []):
+            prof_name = prof["InstanceProfileName"]
+            print(f"🔸 Removing role from instance profile: {prof_name}")
+            iam.remove_role_from_instance_profile(
+                InstanceProfileName=prof_name,
+                RoleName=role_name
+            )
+
+            # Delete instance profile
+            try:
+                print(f"🔸 Deleting instance profile: {prof_name}")
+                iam.delete_instance_profile(InstanceProfileName=prof_name)
+            except Exception as e:
+                print(f"⚠️ Could NOT delete instance profile {prof_name}: {e}")
+    except Exception as e:
+        print(f"⚠️ Error removing from instance profiles: {e}")
+
+    # ------- 4. Delete Role -------
+    try:
+        iam.delete_role(RoleName=role_name)
+        print(f"✅ Role deleted successfully: {role_name}\n")
+    except botocore.exceptions.ClientError as e:
+        print(f"❌ Could not delete role: {e}")
+
+
+# ------------------------------------------------------------
+# Example Usage
+# ------------------------------------------------------------
+if __name__ == "__main__":
+
+    trust_policy = {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Principal": {"Service": "ec2.amazonaws.com"},
+                "Action": "sts:AssumeRole"
+            }
+        ]
+    }
+
+    # Example managed policies:
+    policies = [
+        "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
+        "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"
     ]
-}
 
-if __name__ == '__main__':
-    create_iam_role('EC2S3AccessRole', trust_policy)
-    # Uncomment to delete the role
-    # delete_iam_role('EC2S3AccessRole')
+    create_iam_role("EC2S3AccessRole", trust_policy, managed_policies=policies)
+
+    # Safe delete:
+    # delete_iam_role("EC2S3AccessRole")
 ```
 
 **Usage:**
